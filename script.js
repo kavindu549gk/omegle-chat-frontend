@@ -29,10 +29,27 @@ ws.onmessage = (event) => {
     console.log("Received:", msg);
     
     // Append message to chat box here
-    const msgDiv = document.createElement("div");
-    msgDiv.textContent = "Stranger: " + msg;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    //const msgDiv = document.createElement("div");
+    //msgDiv.textContent = "Stranger: " + msg;
+    //chatBox.appendChild(msgDiv);
+    //chatBox.scrollTop = chatBox.scrollHeight;
+
+
+    if (msg === "__typing__") {
+  document.getElementById("typing-indicator").textContent = "Stranger is typing...";
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    document.getElementById("typing-indicator").textContent = "";
+  }, 2000); // clear after 2 seconds
+} else {
+  document.getElementById("typing-indicator").textContent = "";
+
+  const msgDiv = document.createElement("div");
+  msgDiv.textContent = "Stranger: " + msg;
+  chatBox.appendChild(msgDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
   }
 };
 
