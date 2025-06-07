@@ -26,6 +26,9 @@ body {
   max-width: 700px;
   display: flex;
   flex-direction: column;
+  /* Prevent container from resizing due to chat-box */
+  box-sizing: border-box;
+  height: 400px; /* Fixed height so container fits chat box + input */
 }
 
 .title {
@@ -49,6 +52,7 @@ body {
   flex-direction: column;
   gap: 10px;
   box-sizing: border-box;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .message {
@@ -86,6 +90,8 @@ body {
 .input-area {
   display: flex;
   gap: 10px;
+  /* Keep input area visible at bottom */
+  flex-shrink: 0;
 }
 
 input[type="text"] {
@@ -121,6 +127,7 @@ button:hover {
   .chat-container {
     padding: 15px;
     max-width: 100%; /* Full width on mobile */
+    height: 520px;   /* Fixed height for vertical shape */
   }
 
   .title {
@@ -130,7 +137,7 @@ button:hover {
   /* Fixed vertical chat box for mobile */
   .chat-box {
     width: 320px;   /* Fixed width (vertical shape) */
-    height: 480px;  /* Fixed height taller than wide */
+    height: 400px;  /* Fixed height taller than wide */
     max-width: none;
     overflow-y: auto;
     margin: 0 auto 10px auto; /* Center horizontally */
