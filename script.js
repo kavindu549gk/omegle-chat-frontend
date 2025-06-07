@@ -1,120 +1,51 @@
-
 const ws = new WebSocket("wss://round-speckled-sponge.glitch.me");
 
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
+let typingTimeout;
+let typingCooldown = false;
 
-//ws.onmessage = (event) => {
-//  const msg = document.createElement("div");
-//  msg.textContent = "Stranger: " + event.data;
-//  chatBox.appendChild(msg);
-//  chatBox.scrollTop = chatBox.scrollHeight;
-//};
-
-/*ws.onmessage = (event) => {
-  if (event.data instanceof Blob) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const msg = reader.result;
-      console.log("Received:", msg);
-      
-      // Append message to chat box here
-      const msgDiv = document.createElement("div");
-      msgDiv.textContent = "Stranger: " + msg;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    };
-    reader.readAsText(event.data);
-  } else {
-    const msg = event.data;
-    console.log("Received:", msg);
-    
-    // Append message to chat box here
-    //const msgDiv = document.createElement("div");
-    //msgDiv.textContent = "Stranger: " + msg;
-    //chatBox.appendChild(msgDiv);
-    //chatBox.scrollTop = chatBox.scrollHeight;
-
-
-    if (msg === "__typing__") {
-  document.getElementById("typing-indicator").textContent = "Stranger is typing...";
-  clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(() => {
-    document.getElementById("typing-indicator").textContent = "";
-  }, 2000); // clear after 2 seconds
-} else {
-  document.getElementById("typing-indicator").textContent = "";
-
-  const msgDiv = document.createElement("div");
-  msgDiv.textContent = "Stranger: " + msg;
-  chatBox.appendChild(msgDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-  }
-};
-
-*/
-
-
-
+// Handle incoming messages
 ws.onmessage = (event) => {
-  if (event.data instanceof Blob) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const msg = reader.result;
-
-      if (msg === "__typing__") {
-        document.getElementById("typing-indicator").textContent = "Stranger is typing...";
-        clearTimeout(typingTimeout);
-        typingTimeout = setTimeout(() => {
-          document.getElementById("typing-indicator").textContent = "";
-        }, 2000);
-        return; // 🛑 Stop here — don't treat "__typing__" as a chat message
-      }
-
-      // Normal message
-      document.getElementById("typing-indicator").textContent = "";
-      const msgDiv = document.createElement("div");
-      msgDiv.textContent = "Stranger: " + msg;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    };
-    reader.readAsText(event.data);
-  } else {
-    const msg = event.data;
-
+  const processMessage = (msg) => {
     if (msg === "__typing__") {
       document.getElementById("typing-indicator").textContent = "Stranger is typing...";
       clearTimeout(typingTimeout);
       typingTimeout = setTimeout(() => {
         document.getElementById("typing-indicator").textContent = "";
       }, 2000);
-      return; // 🛑 Stop here — don't treat "__typing__" as a chat message
+      return; // 🛑 Don't show typing as a message
     }
 
-    // Normal message
+    // Display normal message
     document.getElementById("typing-indicator").textContent = "";
     const msgDiv = document.createElement("div");
     msgDiv.textContent = "Stranger: " + msg;
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
+  };
+
+  if (event.data instanceof Blob) {
+    const reader = new FileReader();
+    reader.onload = () => processMessage(reader.result);
+    reader.readAsText(event.data);
+  } else {
+    processMessage(event.data);
   }
 };
 
-
-let typingTimeout;
-
+// Send typing signal (with 2 sec cooldown)
 input.addEventListener("input", () => {
-  ws.send("__typing__");
+  if (!typingCooldown) {
+    ws.send("__typing__");
+    typingCooldown = true;
+    setTimeout(() => {
+      typingCooldown = false;
+    }, 2000);
+  }
 });
 
-
-
-
-
-
-
+// Send message
 function sendMessage() {
   const msg = input.value;
   if (msg.trim() !== "") {
