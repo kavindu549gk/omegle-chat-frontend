@@ -1,5 +1,5 @@
 
-const ws = new WebSocket("wss://your-backend-url.onrender.com");
+const ws = new WebSocket("wss://your-project-name.glitch.me");
 
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
