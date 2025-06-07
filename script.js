@@ -15,16 +15,24 @@ ws.onmessage = (event) => {
     const reader = new FileReader();
     reader.onload = () => {
       const msg = reader.result;
-      // Now msg is a string, handle the message here
       console.log("Received:", msg);
-      // Add your message displaying logic here
+      
+      // Append message to chat box here
+      const msgDiv = document.createElement("div");
+      msgDiv.textContent = "Stranger: " + msg;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
     };
     reader.readAsText(event.data);
   } else {
-    // If it's already a string
     const msg = event.data;
     console.log("Received:", msg);
-    // Add your message displaying logic here
+    
+    // Append message to chat box here
+    const msgDiv = document.createElement("div");
+    msgDiv.textContent = "Stranger: " + msg;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
   }
 };
 
