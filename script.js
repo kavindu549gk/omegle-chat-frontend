@@ -36,6 +36,19 @@ ws.onmessage = (event) => {
   }
 };
 
+
+let typingTimeout;
+
+input.addEventListener("input", () => {
+  ws.send("__typing__");
+});
+
+
+
+
+
+
+
 function sendMessage() {
   const msg = input.value;
   if (msg.trim() !== "") {
