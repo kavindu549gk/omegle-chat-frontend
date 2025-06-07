@@ -10,7 +10,8 @@ const input = document.getElementById("message-input");
 //  chatBox.appendChild(msg);
 //  chatBox.scrollTop = chatBox.scrollHeight;
 //};
-ws.onmessage = (event) => {
+
+/*ws.onmessage = (event) => {
   if (event.data instanceof Blob) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -50,6 +51,54 @@ ws.onmessage = (event) => {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+  }
+};
+
+*/
+
+
+
+ws.onmessage = (event) => {
+  if (event.data instanceof Blob) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const msg = reader.result;
+
+      if (msg === "__typing__") {
+        document.getElementById("typing-indicator").textContent = "Stranger is typing...";
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+          document.getElementById("typing-indicator").textContent = "";
+        }, 2000);
+        return; // 🛑 Stop here — don't treat "__typing__" as a chat message
+      }
+
+      // Normal message
+      document.getElementById("typing-indicator").textContent = "";
+      const msgDiv = document.createElement("div");
+      msgDiv.textContent = "Stranger: " + msg;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    };
+    reader.readAsText(event.data);
+  } else {
+    const msg = event.data;
+
+    if (msg === "__typing__") {
+      document.getElementById("typing-indicator").textContent = "Stranger is typing...";
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        document.getElementById("typing-indicator").textContent = "";
+      }, 2000);
+      return; // 🛑 Stop here — don't treat "__typing__" as a chat message
+    }
+
+    // Normal message
+    document.getElementById("typing-indicator").textContent = "";
+    const msgDiv = document.createElement("div");
+    msgDiv.textContent = "Stranger: " + msg;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
   }
 };
 
