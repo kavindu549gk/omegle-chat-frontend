@@ -14,13 +14,14 @@ ws.onmessage = (event) => {
       typingTimeout = setTimeout(() => {
         document.getElementById("typing-indicator").textContent = "";
       }, 2000);
-      return; // 🛑 Don't show typing as a message
+      return;
     }
 
-    // Display normal message
+    // Display stranger's message
     document.getElementById("typing-indicator").textContent = "";
     const msgDiv = document.createElement("div");
-    msgDiv.textContent = "Stranger: " + msg;
+    msgDiv.className = "message stranger";
+    msgDiv.textContent = msg;
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
   };
@@ -50,10 +51,14 @@ function sendMessage() {
   const msg = input.value;
   if (msg.trim() !== "") {
     ws.send(msg);
+
+    // Show your own message aligned to right
     const msgDiv = document.createElement("div");
-    msgDiv.textContent = "You: " + msg;
+    msgDiv.className = "message you";
+    msgDiv.textContent = msg;
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
+
     input.value = "";
   }
 }
